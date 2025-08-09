@@ -6,7 +6,11 @@ import { join } from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
 
-// ==== Below the Server Setup ==== (Reusable)
+// import our custom services can edit content there according needs
+import { sendClientMessage, handleMessage } from './message.js';
+import { Session } from './session.js';
+
+// ==== Below the Server Setup ==== 
 
 const app = express();
 
@@ -41,19 +45,28 @@ try {
 
 const wss = new WebSocketServer({ server })
 
-// Handle WebSocket connections 
+// ==== Handle WebSocket connections ====
 // 收到 收唔到 唔係靠彩數
+
+const session = new Session(); // Java like, create the session object to handle Sessions
+
 wss.on('connection', (ws) => {
   console.log('New client connected');
+  
+  session.addClient(ws);
 
   ws.on('message', (message) => {
-    console.log(`Received message: ${message}`);
+    handleMessage(message, ws, session);
   });
+
+  sendClientMessage(ws, { type: "welcome", notice: "Welcome to the WebSocket server!" });
 
   ws.on('close', () => {
     console.log('Client disconnected');
   });
 });
+
+// =======================================
 
 // Create the server with your desired port
 const port = process.env.PORT || 3000; // Remember to adjust port if needed, at .env just create it at root
@@ -73,4 +86,4 @@ server.listen(port, () => {
   }
 });
 
-// ==== Above the Server Setup ==== (Reusable)
+// ==== Above the Server Setup ==== 
