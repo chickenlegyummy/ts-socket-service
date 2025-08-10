@@ -1,5 +1,10 @@
-// app.js (rename from app.ts and use plain JavaScript for browser)
+// app.js - Example Client Side, using plain JavaScript
+// may use whatever way to write your frontend
+// I don't prefer you use this as a template tho
+// Since I am not doing frontend template this time
+
 let ws;
+let session = { clientID: null };
 
 function initWebSocket() {
     // Use browser's native WebSocket API, not Node.js ws module
@@ -28,6 +33,20 @@ function handleMessage(data) {
         const message = JSON.parse(data);
         console.log("Received message:", message);
         // Add your message handling logic here
+
+        switch (message.type) {
+            case "welcome":
+                console.log("Welcome message received:", message);
+                session.clientID = message.clientID;
+                document.getElementById("clientIDValue").innerText = session.clientID;
+                break;
+            case "c2c_msg_rcv":
+                console.log("C2C message received:", message);
+                updateC2CMessages(message);
+                break;
+            default:
+                console.warn("Unknown message type:", message.type);
+        }
     } catch (error) {
         console.error("Error parsing message:", error);
     }
@@ -40,7 +59,17 @@ function sendMessage(messageData) {
         console.error("WebSocket is not connected");
     }
 }
+// Methods for updating DOM elements
+function updateC2CMessages(message) {
+    const c2cMessagesDiv = document.getElementById("c2cMessages");
+    if (c2cMessagesDiv) {
+        const messageElement = document.createElement("div");
+        messageElement.innerText = `C2C Message from ${message.clientID}: ${message.c2c_msg}`;
+        c2cMessagesDiv.appendChild(messageElement);
+    }
+}
 
+// Methods for dom buttons
 function setupSendButton() {
     const button = document.getElementById("sendButton");
     if (button) {
@@ -52,9 +81,22 @@ function setupSendButton() {
     }
 }
 
+function setupC2CButton() {
+    const button = document.getElementById("c2cButton");
+    const targetInput = document.getElementById("targetInput");
+    if (button) {
+        button.addEventListener("click", () => {
+            const message = { type: "c2c_msg", c2c_msg: `Hello from client ${session.clientID}`, target: targetInput.value };
+            console.log("Sending C2C message:", message);
+            sendMessage(message);
+        });
+    }
+}
+
 // Wait till the page loaded
 document.addEventListener("DOMContentLoaded", () => {
     initWebSocket();
     setupSendButton();
+    setupC2CButton();
     console.log("Client-side script loaded and WebSocket initialized");
 });

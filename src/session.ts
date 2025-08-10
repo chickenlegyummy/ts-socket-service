@@ -1,6 +1,14 @@
 import WebSocket from 'ws';
+import { sendClientMessage } from './message.js';
+
 export class Session {
   public clientID: string = this.generateUniqueId();
+  public socket: WebSocket | null = null;
+
+  // Constructor
+  constructor(socket: WebSocket) {
+    this.socket = socket;
+  }
 
   // Generate Random Client ID
   public generateUniqueId(): string {
@@ -15,6 +23,14 @@ export class Session {
     const index = list.indexOf(client);
     if (index > -1) {
       list.splice(index, 1);
+    }
+  }
+
+  // Client-to-client messaging example, wrapper of sendClientMessage
+  public c2c_sendMessage(message: any, target: Session) {
+    // Send Message to target ws
+    if (target.socket) {
+      sendClientMessage(target.socket, message);
     }
   }
 }
