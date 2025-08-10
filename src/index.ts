@@ -51,13 +51,12 @@ const wss = new WebSocketServer({ server })
 let sessions: Session[] = []; // Array to hold multiple sessions if needed
 
 wss.on('connection', (ws) => {
-  console.log('New client connected');
+  console.log('[Event] New client connected');
 
   const session = new Session();
   session.addClient(session, sessions);
-  console.log(`New session created with clientID: ${session.clientID}`);
-  console.log(`Current sessions count: ${sessions.length}`);
-  console.log(`Current sessions: ${sessions.map(s => s.clientID).join(', ')}`);
+  console.log(`[Session] New session created with clientID: ${session.clientID}`);
+  console.log(`[Session] Current sessions: ${sessions.map(s => s.clientID).join(', ')}`);
 
   ws.on('message', (message) => {
     handleMessage(message, ws, session);
@@ -66,11 +65,10 @@ wss.on('connection', (ws) => {
   sendClientMessage(ws, { type: "welcome", notice: "Welcome to the WebSocket server!" });
 
   ws.on('close', () => {
-    console.log('Client disconnected');
+    console.log('[Event] Client disconnected');
     session.removeClient(session, sessions);
-    console.log(`Session with clientID ${session.clientID} removed`);
-    console.log(`Current sessions count: ${sessions.length}`);
-    console.log(`Current sessions: ${sessions.map(s => s.clientID).join(', ')}`);
+    console.log(`[Session] Session with clientID ${session.clientID} removed`);
+    console.log(`[Session] Current sessions: ${sessions.map(s => s.clientID).join(', ')}`);
   });
 });
 

@@ -37,20 +37,19 @@ export function handleMessage(message: any, ws: WebSocket, session: Session) {
   } else {
     msg = JSON.stringify(message);
   }
-  console.log(`Received message: ${msg}`);
+  console.log(`[Message - ${session.clientID}] Received message: ${msg}`);
   // Handle the message as needed
   const data = JSON.parse(msg);
   switch (data.type) { // Handle All incoming messages here if you wanted, Optional
-    case "messageType":
+    case "messageType": // Example Message
       // Handle the specific message type
 
       // Example:
-      console.log(`THE_data: ${data.THE_data}`);
-      console.log(`session's clientID ${session.clientID}`);
-      // Console> Bro is Handsome
+      console.log(`[Message - ${session.clientID}] THE_data: ${data.THE_data}`);
+      // Console> [Message - ${session.clientID}] THE_data: Bro is Handsome
 
       break;
     default:
-      console.warn(`Unknown message type: ${data.type}`);
+      console.warn(`[Message - ${session.clientID}] Unknown message type: ${data.type}`);
   }
 }

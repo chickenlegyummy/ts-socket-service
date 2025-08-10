@@ -1,0 +1,7 @@
+1. Basic setup          done
+2. Session setup            done
+3. simple message by session            
+4. simple chatroom system          
+5. extend-by-4: separate rooms (public/private)
+6. simple multiplayer game
+7. no idea yet 
