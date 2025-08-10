@@ -46,7 +46,7 @@ export function handleMessage(message: any, ws: WebSocket, session: Session) {
 
       // Example:
       console.log(`THE_data: ${data.THE_data}`);
-      console.log(`ws: ${ws}, session: ${session}`);
+      console.log(`session's clientID ${session.clientID}`);
       // Console> Bro is Handsome
 
       break;

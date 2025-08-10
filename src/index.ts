@@ -48,12 +48,16 @@ const wss = new WebSocketServer({ server })
 // ==== Handle WebSocket connections ====
 // 收到 收唔到 唔係靠彩數
 
-const session = new Session(); // Java like, create the session object to handle Sessions
+let sessions: Session[] = []; // Array to hold multiple sessions if needed
 
 wss.on('connection', (ws) => {
   console.log('New client connected');
-  
-  session.addClient(ws);
+
+  const session = new Session();
+  session.addClient(session, sessions);
+  console.log(`New session created with clientID: ${session.clientID}`);
+  console.log(`Current sessions count: ${sessions.length}`);
+  console.log(`Current sessions: ${sessions.map(s => s.clientID).join(', ')}`);
 
   ws.on('message', (message) => {
     handleMessage(message, ws, session);
