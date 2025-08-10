@@ -67,6 +67,10 @@ wss.on('connection', (ws) => {
 
   ws.on('close', () => {
     console.log('Client disconnected');
+    session.removeClient(session, sessions);
+    console.log(`Session with clientID ${session.clientID} removed`);
+    console.log(`Current sessions count: ${sessions.length}`);
+    console.log(`Current sessions: ${sessions.map(s => s.clientID).join(', ')}`);
   });
 });
 
