@@ -7,8 +7,10 @@ import fs from 'fs';
 import dotenv from 'dotenv';
 
 // import our custom services can edit content there according needs
-import { sendClientMessage, handleMessage } from './message.js';
+import { sendClientMessage, handleMessage, handleChatRoomMessage, parseMessage } from './message.js';
 import { Session } from './session.js';
+import { ChatRoom } from './chatroom.js';
+import { create } from 'domain';
 
 // ==== Below the Server Setup ==== 
 
@@ -49,7 +51,9 @@ const wss = new WebSocketServer({ server })
 // 收到 收唔到 唔係靠彩數
 
 let sessions: Session[] = []; // Array to hold multiple sessions if needed
+let chatRooms: ChatRoom[] = []; // Array to hold multiple chat rooms
 
+const chatRoom = new ChatRoom(); // Create a default chat room
 wss.on('connection', (ws) => {
   console.log('[Event] New client connected');
 
@@ -59,7 +63,13 @@ wss.on('connection', (ws) => {
   console.log(`[Session] Current sessions: ${sessions.map(s => s.clientID).join(', ')}`);
 
   ws.on('message', (message) => {
-    handleMessage(message, ws, session, sessions);
+    const parsedMessage: string | null = parseMessage(message);
+    // Check if the message is for the chat room by getting the type and prefix
+    if (parsedMessage && JSON.parse(parsedMessage).type.slice(0, 3) == "cr_") {
+      handleChatRoomMessage(message, ws, session, chatRoom);
+    } else {
+      handleMessage(message, ws, session, sessions);
+    }
   });
 
   sendClientMessage(ws, { type: "welcome", notice: "Welcome to the WebSocket server!", clientID: session.clientID });

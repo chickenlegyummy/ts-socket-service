@@ -4,17 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HAHA</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Welcome to My Project</h1>
-    <button id="sendButton">Send Message</button>
+    <h1>Example 1: Send Message Basic</h1>
+    <button id="sendButton">Send Message To Server</button>
+    <h1>Example 2: Send Client-To-Client Message</h1>
     <button id="c2cButton">Send C2C Message</button>
     <input type="text" id="targetInput" placeholder="Enter target client ID">
     <div id="clientIDDisplay">
         Client ID: <span id="clientIDValue"></span>
     </div>
     <div id="c2cMessages"></div>
-    <div id="messages"></div>
+    <h1>Example 3: Naming & ChatRoom</h1>
+    <input type="text" id="nameInput" placeholder="Enter your name">
+    <button id="joinChatButton">Join Chat Room</button>
+    <div class="message-container" id="chatRoomMessages"></div>
+    <input type="text" id="chatMessageInput" placeholder="Type a message">
+    <button id="sendChatButton">Send Message</button>
     <script src="app.js"></script>
 </body>
 </html>

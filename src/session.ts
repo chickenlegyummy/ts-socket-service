@@ -2,8 +2,13 @@ import WebSocket from 'ws';
 import { sendClientMessage } from './message.js';
 
 export class Session {
+  // Necessary properties
   public clientID: string = this.generateUniqueId();
   public socket: WebSocket | null = null;
+
+  // Optional properties
+  public name: string | null = null;
+  public chatRoomJoined: boolean | null = null;
 
   // Constructor
   constructor(socket: WebSocket) {

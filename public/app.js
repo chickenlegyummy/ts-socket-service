@@ -44,6 +44,10 @@ function handleMessage(data) {
                 console.log("C2C message received:", message);
                 updateC2CMessages(message);
                 break;
+            case "cr_msg_toClient":
+                console.log("Chat Room message received:", message);
+                updateChatRoomMessages(message);
+                break;
             default:
                 console.warn("Unknown message type:", message.type);
         }
@@ -59,6 +63,7 @@ function sendMessage(messageData) {
         console.error("WebSocket is not connected");
     }
 }
+
 // Methods for updating DOM elements
 function updateC2CMessages(message) {
     const c2cMessagesDiv = document.getElementById("c2cMessages");
@@ -66,6 +71,15 @@ function updateC2CMessages(message) {
         const messageElement = document.createElement("div");
         messageElement.innerText = `C2C Message from ${message.clientID}: ${message.c2c_msg}`;
         c2cMessagesDiv.appendChild(messageElement);
+    }
+}
+
+function updateChatRoomMessages(message) {
+    const chatRoomMessagesDiv = document.getElementById("chatRoomMessages");
+    if (chatRoomMessagesDiv) {
+        const messageElement = document.createElement("div");
+        messageElement.innerText = `${message.sender}: ${message.content}`;
+        chatRoomMessagesDiv.appendChild(messageElement);
     }
 }
 
@@ -93,10 +107,34 @@ function setupC2CButton() {
     }
 }
 
+function setupChatRoomButton() {
+    const button = document.getElementById("joinChatButton");
+    if (button) {
+        button.addEventListener("click", () => {
+            const message = { type: "cr_joined", name: `${document.getElementById("nameInput").value}` };
+            console.log("Sending Chat Room join message:", message);
+            sendMessage(message);
+        });
+    }
+}
+
+function setupChatRoomMessageButton() {
+    const button = document.getElementById("sendChatButton");
+    if (button) {
+        button.addEventListener("click", () => {
+            const message = { type: "cr_msg", content: `${document.getElementById("chatMessageInput").value}` };
+            console.log("Sending Chat Room message:", message);
+            sendMessage(message);
+        });
+    }
+}
+
 // Wait till the page loaded
 document.addEventListener("DOMContentLoaded", () => {
     initWebSocket();
     setupSendButton();
     setupC2CButton();
+    setupChatRoomButton();
+    setupChatRoomMessageButton();
     console.log("Client-side script loaded and WebSocket initialized");
 });
