@@ -8,7 +8,7 @@ let session = { clientID: null };
 
 function initWebSocket() {
     // Use browser's native WebSocket API, not Node.js ws module
-    ws = new WebSocket(`ws://localhost:3000`); // Use hardcoded port or get from window location
+    ws = new WebSocket(`ws://192.168.10.102:3000`); // Change this so other computer/devices can connect
     
     ws.onopen = function() {
         console.log("WebSocket connection established");
