@@ -48,6 +48,15 @@ function handleMessage(data) {
                 console.log("Chat Room message received:", message);
                 updateChatRoomMessages(message);
                 break;
+            case "cr_msg_toClient_sep":
+                console.log("Chat Room (Separate) message received:", message);
+                updateChatRoomMessages_separate(message);
+                break;
+            case "cr_room_created":
+                console.log("Chat Room created:", message);
+                // Update the UI to reflect the new room
+                AddRoomToList(message);
+                break;
             default:
                 console.warn("Unknown message type:", message.type);
         }
@@ -80,6 +89,25 @@ function updateChatRoomMessages(message) {
         const messageElement = document.createElement("div");
         messageElement.innerText = `${message.sender}: ${message.content}`;
         chatRoomMessagesDiv.appendChild(messageElement);
+    }
+}
+
+function updateChatRoomMessages_separate(message) {
+    const chatRoomMessagesDiv = document.getElementById("chatRoomMessages-room");
+    if (chatRoomMessagesDiv) {
+        const messageElement = document.createElement("div");
+        messageElement.innerText = `${message.sender}: ${message.content}`;
+        chatRoomMessagesDiv.appendChild(messageElement);
+    }
+}
+
+function AddRoomToList(room) {
+    const roomListDiv = document.getElementById("roomList");
+    if (roomListDiv) {
+        const roomElement = document.createElement("div");
+        roomElement.className = "room";
+        roomElement.innerText = room.roomName;
+        roomListDiv.appendChild(roomElement);
     }
 }
 
@@ -129,6 +157,44 @@ function setupChatRoomMessageButton() {
     }
 }
 
+function setupChatRoomButton_room() {
+    const button = document.getElementById("joinChatButton-room");
+    if (button) {
+        button.addEventListener("click", () => {
+            const message = { type: "cr_joined", name: `${document.getElementById("nameInput-room").value}` };
+            console.log("Sending Chat Room join message:", message);
+            sendMessage(message);
+        });
+    }
+}
+
+function setupChatRoomMessageButton_room() {
+    const button = document.getElementById("sendChatButton-room");
+    if (button) {
+        button.addEventListener("click", () => {
+            const message = { type: "cr_msg", content: `${document.getElementById("chatMessageInput-room").value}` };
+            console.log("Sending Chat Room message:", message);
+            sendMessage(message);
+        });
+    }
+}
+
+function setupChatRoomCreateButton() {
+    const button = document.getElementById("createRoom");
+    if (button) {
+        button.addEventListener("click", () => {
+            const message = {
+                type: "cr_create",
+                name: `${document.getElementById("roomNameInput").value}`,
+                isPublic: document.getElementById("publicRoom").checked,
+                password: document.getElementById("roomPasswordInput").value
+            };
+            console.log("Sending Chat Room create message:", message);
+            sendMessage(message);
+        });
+    }
+}
+
 // Wait till the page loaded
 document.addEventListener("DOMContentLoaded", () => {
     initWebSocket();
@@ -136,5 +202,8 @@ document.addEventListener("DOMContentLoaded", () => {
     setupC2CButton();
     setupChatRoomButton();
     setupChatRoomMessageButton();
+    setupChatRoomButton_room();
+    setupChatRoomMessageButton_room();
+    setupChatRoomCreateButton();
     console.log("Client-side script loaded and WebSocket initialized");
 });

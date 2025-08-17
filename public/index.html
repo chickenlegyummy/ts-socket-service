@@ -22,6 +22,19 @@
     <div class="message-container" id="chatRoomMessages"></div>
     <input type="text" id="chatMessageInput" placeholder="Type a message">
     <button id="sendChatButton">Send Message</button>
+    <h1>Example 4: ChatRoom Separation</h1>
+    <input type="text" id="nameInput" placeholder="Enter your name">
+    <div id="roomList">
+        <div id="room0" class="room">Example Room</div>
+    </div>
+    <button id="createRoom">Create Room</button> 
+    <input type="text" id="roomNameInput" placeholder="Enter room name">
+    <label for="publicRoom">Public</label>
+    <input type="radio" name="roomType" id="publicRoom" value="public" checked>
+    <input type="text" id="roomPasswordInput" placeholder="Enter password if private">
+    <div class="message-container" id="chatRoomMessages-room"></div>
+    <input type="text" id="chatMessageInput-room" placeholder="Type a message">
+    <button id="sendChatButton-room">Send Message</button>    
     <script src="app.js"></script>
 </body>
 </html>

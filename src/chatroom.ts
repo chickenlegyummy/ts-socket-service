@@ -4,6 +4,9 @@ import { sendAllClientMessage } from "./message.js";
 
 export class ChatRoom {
   private clients: Session[] = [];
+  public roomName: string = "";
+  public roomPrivate: boolean = false;
+  public roomPassword: string = "";
 
   public addClient(client: Session) {
     this.clients.push(client);

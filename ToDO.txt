@@ -1,8 +1,7 @@
 1. Basic setup          done
 2. Session setup            done
 3. simple message by session            done       
-4. simple chatroom system           progress
-    4.1 fix the bug in duplicating user when join multiple times, better setting a boolean and left and join again.         
+4. simple chatroom system           done     
 5. extend-by-4: separate rooms (public/private)
 6. simple multiplayer game
 7. no idea yet 

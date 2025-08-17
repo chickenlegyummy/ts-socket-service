@@ -51,7 +51,6 @@ const wss = new WebSocketServer({ server })
 // 收到 收唔到 唔係靠彩數
 
 let sessions: Session[] = []; // Array to hold multiple sessions if needed
-let chatRooms: ChatRoom[] = []; // Array to hold multiple chat rooms
 
 const chatRoom = new ChatRoom(); // Create a default chat room
 wss.on('connection', (ws) => {

@@ -1,9 +1,17 @@
+// Message also treated as sub-terminal to handle some global variable
 import WebSocket from "ws";
 import { Session } from "./session.js";
 import { ChatRoom } from "./chatroom.js";
+import { ChatRooms } from "./chatRoomS.js";
 
 // Template of a message syntax
 // {"type": "messageType", "THE_data": "Bro is handsome"}
+
+// Field Declaration
+
+let chatRooms = new ChatRooms();
+
+// Methods
 
 export function parseMessage(message: any): string | null{
   try {
@@ -99,6 +107,38 @@ export function handleChatRoomMessage(message: any, ws: WebSocket, session: Sess
       console.log(`[ChatRoom - ${session.clientID}] ${session.name} sent a message: ${data.content}`);
       chatRoom.broadcastMessage({ type: "cr_msg_toClient", content: data.content, sender: session.name });
       break;
+    case "cr_create":
+      const newRoom = chatRooms.createRoom(data.name, data.isPublic, data.password);
+      sendClientMessage(ws, { type: "cr_room_created", roomName: newRoom.roomName });
+      console.log(`[ChatRoom - ${session.clientID}] Created new chat room: ${newRoom.roomName}`);
+      break;
+    case "cr_join":
+      const room = chatRooms.getRooms().find(r => r.roomName === data.roomName);
+      if (session.chatRoomJoined_Separate) {
+        chatRooms.getRooms().find(r => r.roomName === session.chatRoomName)?.removeClient(session);
+        session.chatRoomName = null;
+        console.log(`[ChatRoom - ${session.clientID}] Left separate chat room because of switching`);
+      }
+      if (room) {
+        if (!room.roomPrivate) {
+          session.chatRoomJoined_Separate = true;
+          session.chatRoomName = room.roomName;
+          room.addClient(session);
+          console.log(`[ChatRoom - ${session.clientID}] Joined chat room: ${room.roomName}`);
+          room.broadcastMessage({ type: "cr_msg_toClient_sep", content: `${session.name} has joined the room.`, sender: "System" });
+        } else if (room.roomPassword === data.password) {
+          session.chatRoomJoined_Separate = true;
+          session.chatRoomName = room.roomName;
+          room.addClient(session);
+          console.log(`[ChatRoom - ${session.clientID}] Joined chat room: ${room.roomName}`);
+          room.broadcastMessage({ type: "cr_msg_toClient_sep", content: `${session.name} has joined the room.`, sender: "System" });
+      }
+      break;
+    } else {
+      console.warn(`[ChatRoom - ${session.clientID}] Chat room not found: ${data.roomName}`);
+    }
+    break;
+
     default:
       console.warn(`[ChatRoom - ${session.clientID}] Unknown chat message type: ${data.type}`);
   }
