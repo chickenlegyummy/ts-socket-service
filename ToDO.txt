@@ -2,6 +2,9 @@
 2. Session setup            done
 3. simple message by session            done       
 4. simple chatroom system           done     
-5. extend-by-4: separate rooms (public/private)
+5. extend-by-4: separate rooms (public/private)         almost
+    TODO: make constraint of no duplication room name allow
+    TODO: remove the room when empty for 30s or something
+    TODO: creator join room automatically
 6. simple multiplayer game
 7. no idea yet 
