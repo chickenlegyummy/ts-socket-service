@@ -8,7 +8,7 @@ export class Session {
 
   // Optional properties
   public name: string | null = null;
-  public chatRoomJoined: boolean | null = null;
+  public chatRoomJoined: boolean = false;
 
   // Constructor
   constructor(socket: WebSocket) {

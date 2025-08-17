@@ -83,8 +83,13 @@ export function handleChatRoomMessage(message: any, ws: WebSocket, session: Sess
   switch (data.type) {
     case "cr_joined":
       session.name = data.name;
-      console.log(`[ChatRoom - ${session.clientID}] ${session.name} joined the chat room`);
-      chatRoom.addClient(session);
+      if (!session.chatRoomJoined) {
+        console.log(`[ChatRoom - ${session.clientID}] ${session.name} joined the chat room`);
+        chatRoom.addClient(session);
+        session.chatRoomJoined = true;
+      } else {
+        console.log(`[ChatRoom - ${session.clientID}] ${session.name} is already in the chat room`);
+      }
       break;
     case "cr_left":
       console.log(`[ChatRoom - ${session.clientID}] ${session.name} left the chat room`);
