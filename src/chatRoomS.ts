@@ -4,10 +4,10 @@ import { ChatRoom } from "./chatroom.js";
 export class ChatRooms {
   private rooms: ChatRoom[] = [];
 
-  public createRoom(name: string, isPrivate: boolean = false, password: string = ""): ChatRoom {
+  public createRoom(name: string, isPublic: boolean, password: string): ChatRoom {
     const newRoom = new ChatRoom();
     newRoom.roomName = name;
-    newRoom.roomPrivate = isPrivate;
+    newRoom.roomPrivate = !isPublic;
     newRoom.roomPassword = password;
     this.rooms.push(newRoom);
     return newRoom;

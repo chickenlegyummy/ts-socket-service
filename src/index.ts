@@ -11,6 +11,8 @@ import { sendClientMessage, handleMessage, handleChatRoomMessage, parseMessage }
 import { Session } from './session.js';
 import { ChatRoom } from './chatroom.js';
 import { create } from 'domain';
+import { ChatRooms } from './chatRoomS.js';
+import { chatRooms } from './message.js';
 
 // ==== Below the Server Setup ==== 
 
@@ -50,7 +52,7 @@ const wss = new WebSocketServer({ server })
 // ==== Handle WebSocket connections ====
 // 收到 收唔到 唔係靠彩數
 
-let sessions: Session[] = []; // Array to hold multiple sessions if needed
+export var sessions: Session[] = []; // Array to hold multiple sessions if needed
 
 const chatRoom = new ChatRoom(); // Create a default chat room
 wss.on('connection', (ws) => {
@@ -72,6 +74,13 @@ wss.on('connection', (ws) => {
   });
 
   sendClientMessage(ws, { type: "welcome", notice: "Welcome to the WebSocket server!", clientID: session.clientID });
+
+  // Init roomList for new connected session
+  if (chatRooms.getRooms().length > 0) {
+    for (const room of chatRooms.getRooms()) {
+      sendClientMessage(ws, { type: "cr_room_created", roomName: room.roomName, roomPrivate: room.roomPrivate});
+    }
+  }
 
   ws.on('close', () => {
     console.log('[Event] Client disconnected');
