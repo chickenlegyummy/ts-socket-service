@@ -106,7 +106,21 @@ function AddRoomToList(room) {
     if (roomListDiv) {
         const roomElement = document.createElement("div");
         roomElement.className = "room";
+        roomElement.id = `${room.roomName}`;
         roomElement.innerText = room.roomName;
+        if (room.roomPrivate) {
+            const roomPasswordInput = document.createElement("input");
+            roomPasswordInput.type = "password";
+            roomPasswordInput.placeholder = "Enter room password";
+            roomElement.appendChild(roomPasswordInput);
+        }
+        const roomJoinButton = document.createElement("button");
+        roomJoinButton.innerText = "Join Room";
+        roomJoinButton.addEventListener("click", () => {
+            roomElement.classList.toggle("selected");
+            setupJoinRoom();
+        });
+        roomElement.appendChild(roomJoinButton);
         roomListDiv.appendChild(roomElement);
     }
 }
@@ -157,14 +171,20 @@ function setupChatRoomMessageButton() {
     }
 }
 
-function setupChatRoomButton_room() {
-    const button = document.getElementById("joinChatButton-room");
-    if (button) {
-        button.addEventListener("click", () => {
-            const message = { type: "cr_joined", name: `${document.getElementById("nameInput-room").value}` };
-            console.log("Sending Chat Room join message:", message);
-            sendMessage(message);
-        });
+function setupJoinRoom() {
+    const room = document.getElementById("roomList").querySelector(".room.selected");
+    room.classList.remove("selected"); // Fix the problem when joining the same room when joining other room
+    // 「錯的永遠不會是你的後端」by Hiei (2025)
+    const name = document.getElementById("nameInput-room").value;
+    if (room && room.querySelector("input[type='password']")) {
+        const password = room.querySelector("input[type='password']").value;
+        const message = { type: "cr_join", roomName: room.id, name: name, password: password };
+        console.log("Sending Chat Room join message:", message);
+        sendMessage(message);
+    } else if (room) {
+        const message = { type: "cr_join", roomName: room.id, name: name };
+        console.log("Sending Chat Room join message:", message);
+        sendMessage(message);
     }
 }
 
@@ -172,7 +192,7 @@ function setupChatRoomMessageButton_room() {
     const button = document.getElementById("sendChatButton-room");
     if (button) {
         button.addEventListener("click", () => {
-            const message = { type: "cr_msg", content: `${document.getElementById("chatMessageInput-room").value}` };
+            const message = { type: "cr_msg_room", content: `${document.getElementById("chatMessageInput-room").value}` };
             console.log("Sending Chat Room message:", message);
             sendMessage(message);
         });
@@ -202,7 +222,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setupC2CButton();
     setupChatRoomButton();
     setupChatRoomMessageButton();
-    setupChatRoomButton_room();
     setupChatRoomMessageButton_room();
     setupChatRoomCreateButton();
     console.log("Client-side script loaded and WebSocket initialized");
